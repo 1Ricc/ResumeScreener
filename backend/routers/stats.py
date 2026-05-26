@@ -41,7 +41,8 @@ def get_stats(
     gap_counts: dict[str, int] = {}
     for s in screenings:
         for gap in (s.gaps or []):
-            gap_counts[gap] = gap_counts.get(gap, 0) + 1
+            gap_title = gap["title"]
+            gap_counts[gap_title] = gap_counts.get(gap_title, 0) + 1
     top_gaps = sorted(
         [{"skill": k, "count": v} for k, v in gap_counts.items()],
         key=lambda x: x["count"],
