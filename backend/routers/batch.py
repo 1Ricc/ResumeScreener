@@ -4,7 +4,7 @@ from backend.db import get_db
 from backend.models import Job, JobStatus, Screening, Calibration
 from backend.schemas import BatchRequest, BatchResponse, JobResponse, DEFAULT_WEIGHTS
 from backend.auth import get_current_user
-from backend.llm.client import get_llm_client
+from backend.llm.client import LLMClient, get_llm_client
 from backend.routers.screen import screen_resume_core
 
 router = APIRouter(prefix="/api", tags=["batch"])
@@ -31,18 +31,18 @@ def _process_batch(job_id: str, jd: str, resumes: list, weights: dict, user_id: 
                     jd_text=jd,
                     resume_text=resume,
                     score=result["score"],
-                    reasoning=result["reasoning"],
+                    reasoning=result["summary"],
                     gaps=result["gaps"],
-                    questions=result["questions"],
+                    questions=result["tips"],
                 )
                 db.add(screening)
                 db.commit()
                 results.append({
                     "resume_preview": resume[:120],
                     "score": result["score"],
-                    "reasoning": result["reasoning"],
+                    "summary": result["summary"],
                     "gaps": result["gaps"],
-                    "questions": result["questions"],
+                    "tips": result["tips"],
                 })
             except ValueError:
                 results.append({"resume_preview": resume[:120], "error": "Screening failed"})

@@ -1,9 +1,10 @@
+import json
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from backend.db import Base, get_db
-from backend.models import Calibration, Screening, Job  # noqa: F401 — registers models with Base.metadata
+from backend.models import Calibration, Screening, Job  # noqa: F401
 from backend.llm.client import get_llm_client
 from backend.auth import get_current_user
 
@@ -13,7 +14,31 @@ TestingSession = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 class MockLLMClient:
     def generate(self, prompt: str) -> str:
-        return '{"score": 75, "reasoning": "Good match overall", "gaps": ["Kubernetes", "System design"], "questions": ["Describe a production incident you handled"]}'
+        return json.dumps({
+            "score": 75,
+            "summary": "Good match overall.",
+            "strengths": [
+                {"title": "Python expertise", "body": "5 years of Python and FastAPI."},
+                {"title": "Backend focus", "body": "Matches the role requirements well."},
+            ],
+            "gaps": [
+                {"title": "Kubernetes", "body": "Not mentioned in resume."},
+                {"title": "System design", "body": "Limited evidence of large-scale systems."},
+            ],
+            "tips": [
+                "Add Kubernetes to your skills section.",
+                "Mention system design projects.",
+                "Quantify your impact with metrics.",
+            ],
+            "breakdown": {
+                "skills_match": 80,
+                "seniority": 70,
+                "culture_fit": 75,
+                "stack_match": 80,
+                "education": 65,
+                "coachability": 75,
+            },
+        })
 
 def override_db():
     db = TestingSession()
