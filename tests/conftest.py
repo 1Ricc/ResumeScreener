@@ -3,6 +3,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from backend.db import Base, get_db
+from backend.models import Calibration, Screening, Job  # noqa: F401 — registers models with Base.metadata
 from backend.llm.client import get_llm_client
 from backend.auth import get_current_user
 
