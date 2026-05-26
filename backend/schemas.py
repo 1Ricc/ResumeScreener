@@ -7,6 +7,8 @@ DEFAULT_WEIGHTS: dict[str, int] = {
     "seniority": 5,
     "culture_fit": 5,
     "stack_match": 5,
+    "education": 5,
+    "coachability": 5,
 }
 
 class CalibrateRequest(BaseModel):
@@ -23,13 +25,16 @@ class ScreenRequest(BaseModel):
     jd: str
     resume: str
     calibration_id: Optional[str] = None
+    weights: Optional[dict[str, int]] = None
 
 class ScreenResponse(BaseModel):
     screening_id: str
     score: int
-    reasoning: str
-    gaps: list[str]
-    questions: list[str]
+    summary: str
+    strengths: list[dict]
+    gaps: list[dict]
+    tips: list[str]
+    breakdown: dict[str, int]
 
 class BatchRequest(BaseModel):
     jd: str

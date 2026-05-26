@@ -12,9 +12,11 @@ def test_prompt_contains_jd_and_resume():
     assert "I know Python" in prompt
 
 def test_prompt_requests_json():
-    prompt = build_screen_prompt("jd", "resume", {"skills": 5})
+    prompt = build_screen_prompt("jd", "resume", {"skills_match": 5})
     assert "JSON" in prompt
     assert "score" in prompt
-    assert "reasoning" in prompt
+    assert "summary" in prompt
+    assert "strengths" in prompt
     assert "gaps" in prompt
-    assert "questions" in prompt
+    assert "tips" in prompt
+    assert "breakdown" in prompt
