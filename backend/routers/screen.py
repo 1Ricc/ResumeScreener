@@ -1,4 +1,5 @@
 import json
+import re
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from backend.db import get_db
@@ -10,6 +11,15 @@ from backend.prompts.builder import build_screen_prompt
 
 router = APIRouter(prefix="/api", tags=["screen"])
 
+def _extract_json(text: str) -> str:
+    text = text.strip()
+    # Strip markdown code fences (```json ... ``` or ``` ... ```)
+    text = re.sub(r'^```(?:json)?\s*\n?', '', text, flags=re.MULTILINE)
+    text = re.sub(r'\n?```\s*$', '', text, flags=re.MULTILINE)
+    # Extract the first complete { ... } block
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    return match.group(0) if match else text
+
 def screen_resume_core(jd: str, resume: str, weights: dict, llm: LLMClient) -> dict:
     """Calls LLM and parses response. Raises ValueError on bad output."""
     prompt = build_screen_prompt(jd, resume, weights)
@@ -19,7 +29,7 @@ def screen_resume_core(jd: str, resume: str, weights: dict, llm: LLMClient) -> d
                 prompt if attempt == 0
                 else prompt + "\nCRITICAL: Return ONLY the JSON object. No explanation, no markdown."
             )
-            result = json.loads(raw)
+            result = json.loads(_extract_json(raw))
             for key in ("score", "summary", "strengths", "gaps", "tips", "breakdown"):
                 if key not in result:
                     raise ValueError(f"Missing key: {key}")

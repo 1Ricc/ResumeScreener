@@ -1,327 +1,219 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Sparkles, Target, Zap, Upload, CheckCircle2, TrendingUp, BarChart3 } from 'lucide-react'
 import { useClerk } from '@clerk/react'
+import Icon from './components/Icon'
+import { useTheme } from './hooks/useTheme'
+
+const TABS = [
+  { id: 'features', label: 'Features' },
+  { id: 'pricing',  label: 'Pricing' },
+  { id: 'about',    label: 'About' },
+]
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState('features')
+  const { theme, setTheme } = useTheme()
   const { openSignIn, openSignUp } = useClerk()
   const router = useRouter()
 
+  const r = 56
+  const c = 2 * Math.PI * r
+  const offset = c * (1 - 87 / 100)
+
   return (
-    <div id="app">
-      {/* Top Navigation */}
-      <div className="topbar">
-        <div className="brand">
-          <div className="brand-mark">RS</div>
-          <span>ResumeScore</span>
-        </div>
+    <div id="app" className="rs-app">
+      {/* Topbar */}
+      <header className="topbar">
+        <div className="topbar-inner">
+          <a className="brand" onClick={() => router.push('/')}>
+            <div className="brand-mark" aria-hidden="true">RS</div>
+            <span>ResumeScore</span>
+          </a>
 
-        <div className="tabs">
-          <button
-            className={`tab ${activeTab === 'features' ? 'is-active' : ''}`}
-            onClick={() => setActiveTab('features')}
-          >
-            Features
-          </button>
-          <button
-            className={`tab ${activeTab === 'pricing' ? 'is-active' : ''}`}
-            onClick={() => setActiveTab('pricing')}
-          >
-            Pricing
-          </button>
-          <button
-            className={`tab ${activeTab === 'about' ? 'is-active' : ''}`}
-            onClick={() => setActiveTab('about')}
-          >
-            About
-          </button>
-        </div>
+          <nav className="tabs" role="tablist" aria-label="Sections">
+            {TABS.map(t => (
+              <button
+                key={t.id}
+                role="tab"
+                aria-selected={activeTab === t.id}
+                className={`tab${activeTab === t.id ? ' is-active' : ''}`}
+                onClick={() => setActiveTab(t.id)}
+              >
+                {t.label}
+              </button>
+            ))}
+          </nav>
 
-        <div className="topbar-right">
-          <button className="btn btn-ghost btn-sm" onClick={() => openSignIn()}>Log In</button>
-          <button className="btn btn-primary btn-sm" onClick={() => openSignUp()}>Sign Up</button>
-        </div>
-      </div>
-
-      {/* Hero Section */}
-      <div className="page">
-        <div className="tpl-landing">
-          <div className="tpl-hero">
-            <div className="tpl-hero-left">
-              <div className="pill pill-lime">
-                <Sparkles size={14} />
-                AI-Powered Resume Analysis
-              </div>
-
-              <h1 className="tpl-hero-title t-display-2">
-                Match Your Resume to Any{' '}
-                <span className="tpl-italic">Job Description</span>
-              </h1>
-
-              <p className="page-sub" style={{ maxWidth: '48ch', marginTop: '20px' }}>
-                Upload your CV and job description to get an instant compatibility score.
-                Our AI analyzes key skills, experience, and requirements to help you stand out.
-              </p>
-
-              <div style={{ display: 'flex', gap: '12px', marginTop: '32px' }}>
-                <button className="btn btn-primary btn-lg" onClick={() => router.push('/upload')}>
-                  <Upload size={18} />
-                  Try It Now
-                </button>
-              </div>
-
-              {/* Stats */}
-              <div className="tpl-hero-stats">
-                <div className="tpl-stat">
-                  <div className="tpl-stat-n">98%</div>
-                  <div className="t-body-sm t-muted">Accuracy</div>
-                </div>
-                <div className="tpl-stat">
-                  <div className="tpl-stat-n">50K+</div>
-                  <div className="t-body-sm t-muted">Resumes</div>
-                </div>
-                <div className="tpl-stat">
-                  <div className="tpl-stat-n">2.5s</div>
-                  <div className="t-body-sm t-muted">Avg. Time</div>
-                </div>
-                <div className="tpl-stat">
-                  <div className="tpl-stat-n">4.9★</div>
-                  <div className="t-body-sm t-muted">Rating</div>
-                </div>
-              </div>
+          <div className="topbar-right">
+            <div className="theme-toggle" role="group" aria-label="Theme">
+              <button
+                className={theme === 'dark' ? 'is-active' : ''}
+                onClick={() => setTheme('dark')}
+                aria-label="Dark theme"
+                title="Dark"
+              >
+                <Icon name="moon" size={12} />
+              </button>
+              <button
+                className={theme === 'light' ? 'is-active' : ''}
+                onClick={() => setTheme('light')}
+                aria-label="Light theme"
+                title="Light"
+              >
+                <Icon name="sun" size={12} />
+              </button>
             </div>
-
-            {/* Hero Visual — Score Card Demo */}
-            <div style={{ position: 'relative' }}>
-              <div className="card" style={{ padding: '32px', minHeight: '480px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div className="t-eyebrow">Resume Analysis</div>
-                  <div className="pill pill-lime">
-                    <CheckCircle2 size={12} />
-                    Complete
-                  </div>
-                </div>
-
-                {/* Score Display */}
-                <div style={{ textAlign: 'center', padding: '32px 0' }}>
-                  <div className="t-eyebrow" style={{ marginBottom: '16px' }}>Match Score</div>
-                  <div style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: 'clamp(72px, 8vw, 96px)',
-                    fontWeight: '600',
-                    letterSpacing: '-0.04em',
-                    lineHeight: '1',
-                    background: 'linear-gradient(135deg, var(--rs-lime), #7FE54D)',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    color: 'transparent',
-                    marginBottom: '8px',
-                  }}>
-                    87
-                  </div>
-                  <div className="t-body t-muted">Strong Match</div>
-                </div>
-
-                {/* Key Metrics */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span className="t-body-sm t-muted">Skills Match</span>
-                      <span className="t-body-sm" style={{ fontWeight: '600' }}>92%</span>
-                    </div>
-                    <div className="progress">
-                      <div className="progress-fill" style={{ width: '92%' }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span className="t-body-sm t-muted">Experience</span>
-                      <span className="t-body-sm" style={{ fontWeight: '600' }}>85%</span>
-                    </div>
-                    <div className="progress">
-                      <div className="progress-fill progress-fill-yellow" style={{ width: '85%' }} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                      <span className="t-body-sm t-muted">Keywords</span>
-                      <span className="t-body-sm" style={{ fontWeight: '600' }}>84%</span>
-                    </div>
-                    <div className="progress">
-                      <div className="progress-fill" style={{ width: '84%' }} />
-                    </div>
-                  </div>
-                </div>
-
-                <button className="btn btn-primary" style={{ marginTop: 'auto' }}>
-                  View Detailed Report
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Features Grid */}
-          <div className="tpl-features">
-            <div className="card tpl-feature">
-              <div className="card-icon card-icon-lime">
-                <Target size={20} />
-              </div>
-              <h3 className="t-h4" style={{ marginTop: '16px', marginBottom: '8px' }}>
-                Smart Matching
-              </h3>
-              <p className="t-body-sm t-muted">
-                AI-powered analysis compares your resume against job requirements to identify strengths and gaps.
-              </p>
-              <div className="card-foot">
-                <span className="tpl-feature-n t-eyebrow">01</span>
-              </div>
-            </div>
-
-            <div className="card tpl-feature">
-              <div className="card-icon card-icon-yellow">
-                <Sparkles size={20} />
-              </div>
-              <h3 className="t-h4" style={{ marginTop: '16px', marginBottom: '8px' }}>
-                Instant Feedback
-              </h3>
-              <p className="t-body-sm t-muted">
-                Get your compatibility score in seconds with detailed breakdowns of skills, experience, and keywords.
-              </p>
-              <div className="card-foot">
-                <span className="tpl-feature-n t-eyebrow">02</span>
-              </div>
-            </div>
-
-            <div className="card tpl-feature">
-              <div className="card-icon card-icon-teal">
-                <TrendingUp size={20} />
-              </div>
-              <h3 className="t-h4" style={{ marginTop: '16px', marginBottom: '8px' }}>
-                Actionable Insights
-              </h3>
-              <p className="t-body-sm t-muted">
-                Receive specific recommendations to improve your resume and increase your match score.
-              </p>
-              <div className="card-foot">
-                <span className="tpl-feature-n t-eyebrow">03</span>
-              </div>
-            </div>
-
-            <div className="card tpl-feature">
-              <div className="card-icon card-icon-lime">
-                <BarChart3 size={20} />
-              </div>
-              <h3 className="t-h4" style={{ marginTop: '16px', marginBottom: '8px' }}>
-                Track Progress
-              </h3>
-              <p className="t-body-sm t-muted">
-                Monitor improvements over time and see how your changes impact your compatibility score.
-              </p>
-              <div className="card-foot">
-                <span className="tpl-feature-n t-eyebrow">04</span>
-              </div>
-            </div>
+            <button className="btn btn-ghost btn-sm" onClick={() => openSignIn({ forceRedirectUrl: '/upload' })}>Sign In</button>
+            <button className="btn btn-primary btn-sm" onClick={() => openSignUp({ forceRedirectUrl: '/upload' })}>Get Started</button>
           </div>
         </div>
+      </header>
 
-        {/* How It Works */}
-        <div className="section">
-          <div className="section-head">
-            <div>
-              <h2 className="section-title">How It Works</h2>
-              <p className="section-sub">Three simple steps to optimize your resume</p>
-            </div>
-          </div>
+      <main className="page">
+        <div className="rs-landing">
+          {/* ===== HERO ===== */}
+          <section className="rs-hero">
+            <div className="rs-hero-bg" aria-hidden="true" />
 
-          <div className="grid grid-3">
-            <div className="card" style={{ padding: '28px', minHeight: '240px' }}>
-              <div style={{
-                width: '48px', height: '48px', borderRadius: '12px',
-                background: 'var(--accent-bg)', border: '1px solid var(--accent-bd)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: '600',
-                color: 'var(--accent)', marginBottom: '20px',
-              }}>
-                1
+            <div className="rs-hero-grid">
+              {/* Left */}
+              <div className="rs-hero-left">
+                <span className="rs-eyebrow-pill">
+                  <Icon name="zap" size={14} />
+                  AI-Powered Resume Analysis
+                </span>
+
+                <h1 className="rs-hero-title">
+                  Match Your Resume to{' '}
+                  <span className="rs-title-accent">Any Job Description</span>
+                </h1>
+
+                <p className="rs-hero-sub">
+                  Upload your CV and job description to get an instant compatibility
+                  score. Our AI analyzes key skills, experience, and requirements
+                  to help you stand out.
+                </p>
+
+                <div className="rs-hero-cta">
+                  <button className="btn btn-primary btn-lg" onClick={() => router.push('/upload')}>
+                    <Icon name="arrowUpRight" size={16} />
+                    Try It Now
+                  </button>
+                </div>
+
+                <dl className="rs-hero-stats">
+                  <div className="rs-stat">
+                    <dt className="rs-stat-n">98%</dt>
+                    <dd className="rs-stat-l">Accuracy</dd>
+                  </div>
+                  <div className="rs-stat">
+                    <dt className="rs-stat-n">50K+</dt>
+                    <dd className="rs-stat-l">Resumes</dd>
+                  </div>
+                  <div className="rs-stat">
+                    <dt className="rs-stat-n">2.5s</dt>
+                    <dd className="rs-stat-l">Avg. Time</dd>
+                  </div>
+                  <div className="rs-stat">
+                    <dt className="rs-stat-n">4.9<span className="rs-star">★</span></dt>
+                    <dd className="rs-stat-l">Rating</dd>
+                  </div>
+                </dl>
               </div>
-              <h3 className="t-h4" style={{ marginBottom: '12px' }}>Upload Documents</h3>
-              <p className="t-body-sm t-muted">
-                Upload your resume and paste the job description you&apos;re applying for. We support PDF, Word, and text formats.
-              </p>
-            </div>
 
-            <div className="card" style={{ padding: '28px', minHeight: '240px' }}>
-              <div style={{
-                width: '48px', height: '48px', borderRadius: '12px',
-                background: 'var(--warning-bg)', border: '1px solid var(--warning-bd)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: '600',
-                color: 'var(--warning)', marginBottom: '20px',
-              }}>
-                2
-              </div>
-              <h3 className="t-h4" style={{ marginBottom: '12px' }}>AI Analysis</h3>
-              <p className="t-body-sm t-muted">
-                Our AI engine analyzes both documents, comparing skills, experience, education, and key requirements.
-              </p>
-            </div>
+              {/* Right — score card demo */}
+              <div className="rs-hero-right">
+                <div className="rs-score-card">
+                  <header className="rs-score-head">
+                    <span className="rs-score-eyebrow">RESUME ANALYSIS</span>
+                    <span className="rs-score-complete">
+                      <Icon name="check" size={12} />
+                      Complete
+                    </span>
+                  </header>
 
-            <div className="card" style={{ padding: '28px', minHeight: '240px' }}>
-              <div style={{
-                width: '48px', height: '48px', borderRadius: '12px',
-                background: 'var(--teal-bg)', border: '1px solid var(--teal-bd)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: 'var(--font-display)', fontSize: '20px', fontWeight: '600',
-                color: '#B6D8DD', marginBottom: '20px',
-              }}>
-                3
+                  <div className="rs-score-body">
+                    <p className="rs-score-label">MATCH SCORE</p>
+
+                    <div className="rs-donut">
+                      <span className="rs-donut-glow" aria-hidden="true" />
+                      <svg viewBox="0 0 140 140" width="140" height="140" style={{ overflow: 'visible' }}>
+                        <circle cx="70" cy="70" r={r} stroke="rgba(255,255,255,0.08)" strokeWidth="10" fill="none" />
+                        <circle
+                          cx="70" cy="70" r={r}
+                          stroke="var(--rs-lime)"
+                          strokeWidth="10"
+                          fill="none"
+                          strokeDasharray={c}
+                          strokeDashoffset={offset}
+                          strokeLinecap="round"
+                          transform="rotate(-90 70 70)"
+                        />
+                      </svg>
+                      <div className="rs-donut-center">
+                        <span className="rs-donut-n">87</span>
+                        <span className="rs-donut-d">/ 100</span>
+                      </div>
+                    </div>
+
+                    <p className="rs-score-tag">Strong Match</p>
+
+                    <div className="rs-bars">
+                      {[
+                        { label: 'Skills Match', value: 92, tone: 'lime' },
+                        { label: 'Experience',   value: 85, tone: 'yellow' },
+                        { label: 'Keywords',     value: 84, tone: 'lime' },
+                      ].map(bar => (
+                        <div key={bar.label} className="rs-bar">
+                          <div className="rs-bar-head">
+                            <span>{bar.label}</span>
+                            <span className="rs-bar-pct">{bar.value}%</span>
+                          </div>
+                          <div className="rs-bar-track">
+                            <div className={`rs-bar-fill rs-tone-${bar.tone}`} style={{ width: `${bar.value}%` }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button className="btn btn-primary btn-lg rs-score-cta" onClick={() => router.push('/upload')}>
+                      View Detailed Report
+                    </button>
+                  </div>
+                </div>
               </div>
-              <h3 className="t-h4" style={{ marginBottom: '12px' }}>Get Your Score</h3>
-              <p className="t-body-sm t-muted">
-                Receive a detailed compatibility score with specific recommendations to improve your application.
-              </p>
             </div>
-          </div>
+          </section>
+
+          {/* ===== FEATURES ===== */}
+          <section className="rs-features">
+            {[
+              { tone: 'lime',   icon: 'layers',  title: 'Smart Matching',      body: 'AI-powered analysis compares your resume against job requirements to identify strengths and gaps.' },
+              { tone: 'yellow', icon: 'zap',     title: 'Instant Feedback',    body: 'Get your compatibility score in seconds with detailed breakdowns of skills, experience, and keywords.' },
+              { tone: 'teal',   icon: 'trending', title: 'Actionable Insights', body: 'Receive specific recommendations to improve your resume and increase your match score.' },
+              { tone: 'lime',   icon: 'chart',   title: 'Track Progress',      body: 'Monitor improvements over time and see how your changes impact your compatibility score.' },
+            ].map(f => (
+              <article key={f.title} className="rs-feature">
+                <div className={`rs-feature-icon rs-tone-${f.tone}`}>
+                  <Icon name={f.icon} size={20} />
+                </div>
+                <h3 className="rs-feature-title">{f.title}</h3>
+                <p className="rs-feature-body">{f.body}</p>
+              </article>
+            ))}
+          </section>
         </div>
+      </main>
 
-        {/* CTA Section */}
-        <div className="section">
-          <div className="card-promo">
-            <div style={{ maxWidth: '60ch', position: 'relative', zIndex: 1 }}>
-              <div className="promo-tag" style={{ marginBottom: '20px' }}>Free Trial</div>
-              <h2 className="t-h1" style={{ marginBottom: '16px' }}>
-                Ready to Land Your Dream Job?
-              </h2>
-              <p className="t-body-lg t-muted" style={{ marginBottom: '28px' }}>
-                Start analyzing your resume today. Get 3 free scans to see how you match up against any job description.
-              </p>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <button className="btn btn-primary btn-lg" onClick={() => router.push('/upload')}>
-                  <Zap size={18} />
-                  Start Free Trial
-                </button>
-                <button className="btn btn-secondary btn-lg">
-                  View Pricing
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <div className="foot">
+      <footer className="foot">
         <div>© 2026 ResumeScore. All rights reserved.</div>
         <div style={{ display: 'flex', gap: '24px' }}>
-          <a href="#" style={{ color: 'var(--text-45)' }}>Privacy</a>
-          <a href="#" style={{ color: 'var(--text-45)' }}>Terms</a>
-          <a href="#" style={{ color: 'var(--text-45)' }}>Contact</a>
+          <a href="#">Privacy</a>
+          <a href="#">Terms</a>
+          <a href="#">Contact</a>
         </div>
-      </div>
+      </footer>
     </div>
   )
 }
