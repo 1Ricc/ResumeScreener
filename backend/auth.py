@@ -5,7 +5,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import jwt, JWTError
 
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 @lru_cache(maxsize=1)
 def _get_jwks() -> dict:
@@ -15,6 +15,14 @@ def _get_jwks() -> dict:
     return resp.json()
 
 def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    # Dev bypass: set DEV_BYPASS_USER_ID in .env to skip JWT verification locally
+    bypass_user = os.getenv("DEV_BYPASS_USER_ID")
+    if bypass_user:
+        return bypass_user
+
+    if not credentials:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Not authenticated")
+
     token = credentials.credentials
     try:
         jwks = _get_jwks()

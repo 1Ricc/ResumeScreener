@@ -1,0 +1,132 @@
+/* ==========================================================================
+   Showcase site styles
+   ========================================================================== */
+
+html, body { min-height: 100%; }
+body {
+  background: var(--bg);
+}
+
+#app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Top bar ---------- */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 24px;
+  height: 68px; padding: 0 32px;
+  background: color-mix(in oklab, var(--bg) 70%, transparent);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 17px; letter-spacing: -0.02em;
+}
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--rs-lime), #7FE54D 70%, var(--rs-teal));
+  display: grid; place-items: center;
+  color: var(--text-on-lime); font-weight: 700;
+  letter-spacing: -0.04em; font-size: 13px;
+  box-shadow: var(--shadow-glow);
+}
+.tabs {
+  display: flex; gap: 4px; padding: 4px;
+  background: var(--bg-glass); border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+}
+.tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 36px; padding: 0 16px; border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 500; color: var(--text-65);
+  border: 1px solid transparent; background: transparent;
+  transition: all var(--tr-base); letter-spacing: -0.005em;
+}
+.tab:hover { color: var(--text); background: var(--bg-glass-hi); }
+.tab.is-active {
+  background: var(--bg-3); color: var(--text);
+  border-color: var(--border-strong); box-shadow: var(--shadow-xs);
+}
+[data-theme="light"] .tab.is-active { background: #fff; }
+.topbar-right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+
+/* ---------- Page shell ---------- */
+.page {
+  max-width: 1280px; width: 100%;
+  margin: 0 auto; padding: 56px 32px 96px;
+}
+.page-header {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px; padding-bottom: 32px;
+  border-bottom: 1px solid var(--border); margin-bottom: 48px;
+}
+.page-title {
+  font-family: var(--font-display); font-size: var(--fs-d2);
+  font-weight: 600; letter-spacing: var(--tr-display);
+  line-height: 1.0; margin: 0;
+}
+.page-eyebrow {
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 14px;
+}
+.page-sub {
+  font-size: var(--fs-lg); color: var(--text-65);
+  max-width: 56ch; margin-top: 18px; line-height: 1.5;
+}
+
+/* ---------- Textarea ---------- */
+.textarea {
+  height: auto;
+  padding: 12px 14px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* ---------- Section blocks ---------- */
+.section { margin-top: 72px; }
+.section:first-of-type { margin-top: 0; }
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 24px; margin-bottom: 24px; padding-bottom: 16px;
+  border-bottom: 1px dashed var(--border);
+}
+.section-title {
+  font-family: var(--font-display); font-size: 26px;
+  font-weight: 600; letter-spacing: -0.02em; margin: 0;
+}
+.section-sub { color: var(--text-65); font-size: 14px; max-width: 50ch; }
+
+/* ---------- Grids ---------- */
+.grid { display: grid; gap: 16px; }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) {
+  .grid-3, .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ---------- Footer ---------- */
+.foot {
+  margin-top: auto; padding: 32px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; gap: 24px;
+  font-size: 12px; color: var(--text-45); font-family: var(--font-mono);
+}
+
+/* ---------- Animation: pulse ---------- */
+@keyframes rs-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.55; transform: scale(1.4); }
+}
+.dot-pulse {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 12px var(--accent);
+  animation: rs-pulse 2s ease-in-out infinite;
+}

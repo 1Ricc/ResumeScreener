@@ -3,3 +3,19 @@ docs/
 style/
 
 .env
+
+# Python
+__pycache__/
+*.py[cod]
+*.db
+.python-version
+
+# Node / Next.js
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+
+# Misc
+uv.lock
+pyproject.toml

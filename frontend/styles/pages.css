@@ -1,0 +1,115 @@
+/* ==========================================================================
+   Page-specific styles
+   ========================================================================== */
+
+/* ============================== TEMPLATES ============================== */
+
+/* --- Landing --- */
+.tpl-landing {
+  padding: 28px 36px 56px;
+}
+
+.tpl-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: center;
+  min-height: 540px;
+}
+@media (max-width: 900px) {
+  .tpl-hero { grid-template-columns: 1fr; }
+}
+.tpl-hero-left { padding: 20px 0; }
+.tpl-hero-title {
+  margin: 24px 0 0;
+  letter-spacing: -0.04em;
+}
+.tpl-italic {
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--rs-lime), #DAFFB8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.tpl-hero-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 48px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.tpl-stat { display: flex; flex-direction: column; gap: 4px; }
+.tpl-stat-n {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--accent);
+}
+
+/* Feature grid */
+.tpl-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 64px;
+  padding-top: 56px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 1000px) { .tpl-features { grid-template-columns: repeat(2, 1fr); } }
+.tpl-feature { padding: 24px; min-height: 200px; display: flex; flex-direction: column; }
+.tpl-feature-n { font-size: 11px; }
+
+/* Card helpers */
+.card-icon {
+  width: 40px; height: 40px; border-radius: 11px;
+  display: grid; place-items: center;
+  background: var(--accent-bg); border: 1px solid var(--accent-bd); color: var(--accent);
+}
+.card-icon-lime   { background: var(--accent-bg);  border-color: var(--accent-bd);  color: var(--accent); }
+.card-icon-yellow { background: var(--warning-bg); border-color: var(--warning-bd); color: var(--warning); }
+.card-icon-teal   { background: var(--teal-bg);    border-color: var(--teal-bd);    color: #B6D8DD; }
+
+.card-foot {
+  margin-top: auto; padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  color: var(--text-45);
+}
+
+/* Promo card */
+.card-promo {
+  background:
+    radial-gradient(500px 300px at 100% 0%, rgba(169,255,103,0.14), transparent 60%),
+    var(--bg-glass);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  position: relative;
+  padding: 32px;
+  overflow: hidden;
+}
+.promo-tag {
+  display: inline-flex; align-items: center;
+  height: 22px; padding: 0 10px; border-radius: 7px;
+  background: var(--rs-lime); color: var(--text-on-lime);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+}
+
+/* Progress bars */
+.progress {
+  height: 6px;
+  background: var(--bg-glass-hi);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 14px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--rs-lime);
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(169,255,103,0.5);
+}
+.progress-fill-yellow { background: var(--rs-yellow); box-shadow: 0 0 10px rgba(244,219,94,0.5); }
