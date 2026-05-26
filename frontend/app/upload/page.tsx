@@ -45,6 +45,7 @@ export default function UploadPage() {
   const [lineIdx, setLineIdx] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
   useEffect(() => {
     if (!analyzing) { setLineIdx(0); return }
@@ -66,22 +67,27 @@ export default function UploadPage() {
   }
 
   const handleAnalyze = async () => {
-    if (!canSubmit) return
+    if (!canSubmit || !cv) return
+    const controller = new AbortController()
+    abortRef.current = controller
     setAnalyzing(true)
     setError(null)
     try {
-      const resumeText = await extractPdfText(cv!)
+      const resumeText = await extractPdfText(cv)
       const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
       const res = await fetch(`${apiUrl}/api/screen`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ jd, resume: resumeText, weights }),
+        signal: controller.signal,
       })
       if (!res.ok) throw new Error(`API error ${res.status}`)
       const data = await res.json()
       sessionStorage.setItem('screeningResult', JSON.stringify(data))
       router.push('/score')
-    } catch {
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return
+      console.error('Analysis failed:', err)
       setAnalyzing(false)
       setError('Analysis failed — please check the backend is running and try again.')
     }
@@ -356,6 +362,12 @@ export default function UploadPage() {
               </button>
             </div>
 
+            {error && (
+              <p style={{ color: 'var(--rs-yellow)', marginTop: 12, marginBottom: 0, fontSize: 13, textAlign: 'center', padding: '0 24px' }}>
+                {error}
+              </p>
+            )}
+
           </div>
 
           {/* Analyzing overlay */}
@@ -385,14 +397,9 @@ export default function UploadPage() {
                   ))}
                 </div>
 
-                <button className="btn btn-ghost btn-sm rs-analyzing-cancel" onClick={() => setAnalyzing(false)}>
+                <button className="btn btn-ghost btn-sm rs-analyzing-cancel" onClick={() => { abortRef.current?.abort(); setAnalyzing(false) }}>
                   Cancel
                 </button>
-                {error && (
-                  <p style={{ color: 'var(--rs-yellow)', marginTop: 12, fontSize: 13, textAlign: 'center' }}>
-                    {error}
-                  </p>
-                )}
               </div>
             </div>
           )}
