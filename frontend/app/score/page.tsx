@@ -31,7 +31,12 @@ export default function ScorePage() {
   useEffect(() => {
     const raw = sessionStorage.getItem('screeningResult')
     if (!raw) { router.replace('/upload'); return }
-    setResult(JSON.parse(raw))
+    try {
+      setResult(JSON.parse(raw))
+    } catch {
+      sessionStorage.removeItem('screeningResult')
+      router.replace('/upload')
+    }
   }, [router])
 
   if (!result) return null
@@ -43,7 +48,7 @@ export default function ScorePage() {
 
   const sideBars = Object.entries(breakdown).map(([key, value]) => ({
     label: WEIGHT_LABELS[key] ?? key,
-    value,
+    value: Math.round(value),
     tone: value >= 80 ? 'lime' : value >= 60 ? 'teal' : 'yellow',
   }))
 
@@ -129,8 +134,8 @@ export default function ScorePage() {
                   What&apos;s working
                 </h3>
                 <ul className="rs-report-list">
-                  {strengths.map(s => (
-                    <li key={s.title} className="rs-report-item">
+                  {strengths.map((s, i) => (
+                    <li key={i} className="rs-report-item">
                       <span className="rs-report-bullet rs-bullet-lime">
                         <Icon name="check" size={11} />
                       </span>
@@ -150,8 +155,8 @@ export default function ScorePage() {
                   Where you&apos;re losing points
                 </h3>
                 <ul className="rs-report-list">
-                  {gaps.map(g => (
-                    <li key={g.title} className="rs-report-item">
+                  {gaps.map((g, i) => (
+                    <li key={i} className="rs-report-item">
                       <span className="rs-report-bullet rs-bullet-yellow">!</span>
                       <div>
                         <p className="rs-report-item-title">{g.title}</p>
@@ -179,7 +184,7 @@ export default function ScorePage() {
               </section>
 
               <footer className="rs-report-foot">
-                <button className="btn btn-ghost btn-sm">
+                <button className="btn btn-ghost btn-sm" disabled title="Coming soon">
                   <Icon name="download" size={12} />
                   Download report (PDF)
                 </button>
