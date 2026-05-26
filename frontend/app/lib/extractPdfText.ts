@@ -1,8 +1,13 @@
 import * as pdfjsLib from 'pdfjs-dist'
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`
-
 export async function extractPdfText(file: File): Promise<string> {
+  if (typeof window !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+      'pdfjs-dist/build/pdf.worker.min.mjs',
+      import.meta.url,
+    ).href
+  }
+
   const arrayBuffer = await file.arrayBuffer()
   const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise
   const pages: string[] = []
@@ -14,5 +19,5 @@ export async function extractPdfText(file: File): Promise<string> {
       .join(' ')
     pages.push(pageText)
   }
-  return pages.join('\n')
+  return pages.filter(p => p.trim()).join('\n')
 }
